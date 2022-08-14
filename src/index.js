@@ -1,7 +1,8 @@
 import './css/styles.css';
-import axios from "axios"
+import axios from 'axios';
 import Notiflix from 'notiflix'
 import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 const MY_KEY = "29140454-a281ece1e755381c74175cb00"
 
 const input = document.querySelector('input')
@@ -22,26 +23,24 @@ form.addEventListener("submit", (e) => {
   gallery.textContent = ""
   result = input.value
     fetchImg()
-      .then(({hits, totalHits}) => {
-        
+      .then(({ hits, totalHits }) => {
         console.log(totalHits)
         totalImages = totalHits
-   pagesTotal = Math.floor(totalImages / 40)
-  console.log(pagesTotal)
-
-          if (totalImages < 50) {
-     loadMore.classList.add("hidden")
-  }
+        pagesTotal = Math.floor(totalImages / 40)
+        console.log(pagesTotal)        
+          
+        if (totalImages < 50) {
+          loadMore.classList.add("hidden")
+        }
+        if (input.value === "") {
+          Notiflix.Notify.failure('Введите запрос.')
+          return;
+        }
         if (hits.length === 0) {
-  Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-  // } else if (totalHits > 50 && pageNumber > pagesTotal) {
-  //   loadMore.classList.add("hidden")
-  //   Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")
-  } else  Notiflix.Notify.success(`Hooray! We found ${totalImages} images.`)
+          Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        } else Notiflix.Notify.success(`Hooray! We found ${totalImages} images.`)
 
-
-
-        renderImgList({hits, totalHits})
+        renderImgList({ hits, totalHits })
       }
       )
     .catch((error) => console.log(error))
@@ -61,23 +60,25 @@ loadMore.addEventListener("click", (e) => {
     .catch((error) => console.log(error))
 })
 
-async function fetchImg ()  {
-  // result = input.value
+
+
+const fetchImg = async () => {
   console.log(result)
   pageNumber += 1
 
-  const response = await fetch(`https://pixabay.com/api/?key=${MY_KEY}&q=${result}&image_type=photo&orientation=horizontal&safesearch=true&page=${pageNumber}&per_page=40`)
-  const images = response.json()
-  return images
+  const response = await axios.get(`https://pixabay.com/api/?key=${MY_KEY}&q=${result}&image_type=photo&orientation=horizontal&safesearch=true&page=${pageNumber}&per_page=40`)
+  // const images = response.json()
+  return response.data
 }
 
-function renderImgList({hits, totalHits}) {
+function renderImgList({hits}) {
   input.value=""
 
   const markup = hits
     .map((hit) => {
-    return `<div class="photo-card">
-    <img class="gallery__image"src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
+      return `<div class="photo-card">
+    <a class="gallery__link" href="${hit.largeImageURL}"> 
+    <img class="gallery__image"src="${hit.webformatURL}" data-source="${hit.largeImageURL}" alt="${hit.tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
       <b>Likes ${hit.likes}</b>
@@ -98,4 +99,7 @@ function renderImgList({hits, totalHits}) {
     gallery.insertAdjacentHTML("beforeend", markup) }
 
 
-
+let lightbox = new SimpleLightbox('.gallery  a', {captionsData : "alt",captionDelay : 250});
+lightbox.on('show.simplelightbox', function (e) {
+	console.log(e)
+})
