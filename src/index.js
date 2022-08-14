@@ -43,7 +43,9 @@ form.addEventListener("submit", (e) => {
         renderImgList({ hits, totalHits })
       }
       )
-    .catch((error) => console.log(error))
+      .catch((error) => console.log(error))
+  
+  // let lightbox = new SimpleLightbox('.gallery  a', {captionsData : "alt",captionDelay : 250});
 })
 
 loadMore.addEventListener("click", (e) => {
@@ -96,10 +98,10 @@ function renderImgList({hits}) {
 </div>`
         })
         .join("")
-    gallery.insertAdjacentHTML("beforeend", markup) }
+  gallery.insertAdjacentHTML("beforeend", markup)
 
+  let lightbox = new SimpleLightbox('.gallery  a', {captionsData : "alt",captionDelay : 250});
+}
 
-let lightbox = new SimpleLightbox('.gallery  a', {captionsData : "alt",captionDelay : 250});
-lightbox.on('show.simplelightbox', function (e) {
-	console.log(e)
-})
+// let lightbox = new SimpleLightbox('.gallery  a', {captionsData : "alt",captionDelay : 250});
+
