@@ -100,6 +100,15 @@ function renderImgList({hits}) {
         .join("")
   gallery.insertAdjacentHTML("beforeend", markup)
 
+  const { height: cardHeight } = document
+  .querySelector(".gallery")
+  .firstElementChild.getBoundingClientRect();
+
+// window.scrollBy({
+//   top: cardHeight * 2,
+//   behavior: "smooth",
+// });
+
   let lightbox = new SimpleLightbox('.gallery  a', {captionsData : "alt",captionDelay : 250});
 }
 
